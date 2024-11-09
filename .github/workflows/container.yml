@@ -25,7 +25,7 @@ jobs:
       # Step 3: Build the container
       - run: npm run build
 
-      # Step 4: Set up AWS CLI (Install AWS CLI if needed)
+      # Step 4: Set up AWS CLI (Install AWS CLI if needed).
       - uses: chrislennon/action-aws-cli@v1.1
 
       # Step 5: Update PATH if needed (if AWS CLI isn't in PATH automatically)
