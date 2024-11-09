@@ -26,14 +26,19 @@ jobs:
       # Step 3: Build the project
       - run: npm run build
 
-      # Step 4: Install AWS CLI manually to avoid deprecated add-path issue
-      - name: Install AWS CLI
+      # Step 4: Install or update AWS CLI
+      - name: Install or Update AWS CLI
         run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
-          # Verify AWS CLI installation
-          aws --version
+          if ! command -v aws &> /dev/null; then
+            echo "AWS CLI not found. Installing..."
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+          else
+            echo "AWS CLI already installed. Updating..."
+            sudo /usr/local/aws-cli/v2/current/bin/aws --version
+            sudo ./aws/install --update
+          fi
 
       # Step 5: Sync the dist directory to S3
       - name: Sync to S3
