@@ -16,11 +16,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the code
       - uses: actions/checkout@v2
+
+      # Step 2: Install dependencies
       - run: npm install
+
+      # Step 3: Build the container
       - run: npm run build
 
+      # Step 4: Set up AWS CLI (Install AWS CLI if needed)
       - uses: chrislennon/action-aws-cli@v1.1
+
+      # Step 5: Update PATH if needed (if AWS CLI isn't in PATH automatically)
+      - run: echo "/opt/hostedtoolcache/aws/0.0.0/x64/bin" >> $GITHUB_ENV
+        # This ensures the AWS CLI is in the PATH for subsequent steps.
+
+      # Step 6: Sync files to S3
       - run: aws s3 sync dist s3://${{ secrets.AWS_S3_BUCKET_NAME }}/container/latest
         env: 
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
