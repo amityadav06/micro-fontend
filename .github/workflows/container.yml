@@ -36,8 +36,10 @@ jobs:
             sudo ./aws/install
           else
             echo "AWS CLI already installed. Updating..."
-            sudo /usr/local/aws-cli/v2/current/bin/aws --version
-            sudo ./aws/install --update
+            # Run AWS CLI's update command to update to the latest version
+            aws --version
+            aws configure list
+            aws --update
           fi
 
       # Step 5: Sync the dist directory to S3
