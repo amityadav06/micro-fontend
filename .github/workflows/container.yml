@@ -2,7 +2,7 @@ name: deploy-container
 
 on:
   push:
-    branches:
+    branches: 
       - main
     paths:
       - '.github/workflows/**'
@@ -17,34 +17,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - uses: actions/checkout@v2
-
-      # Step 2: Install dependencies
       - run: npm install
-
-      # Step 3: Build the project
       - run: npm run build
 
-      # Step 4: Install or update AWS CLI
-      - name: Install or Update AWS CLI
-        run: |
-          if ! command -v aws &> /dev/null; then
-            echo "AWS CLI not found. Installing..."
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-          else
-            echo "AWS CLI already installed. Updating..."
-            # Run AWS CLI's update command to update to the latest version
-            aws --version
-            aws configure list
-            aws --update
-          fi
-
-      # Step 5: Sync the dist directory to S3
-      - name: Sync to S3
-        run: aws s3 sync dist s3://${{ secrets.AWS_S3_BUCKET_NAME }}/container/latest
+      - uses: chrislennon/action-aws-cli@v1.1
+      - run: aws s3 sync dist s3://${{ secrets.AWS_S3_BUCKET_NAME }}/container/latest
         env: 
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
